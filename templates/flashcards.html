@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard App - Flashcards</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .flashcard {
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Flashcards for {{ username }}</h1>
+        <p class="lead">Cards for today: {{ count }}</p>
+        {% if flashcard %}
+            <div class="card flashcard mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Question:</h2>
+                    <p class="card-text">{{ flashcard.question }}</p>
+                    <button class="btn btn-primary" onclick="showAnswer()">Show Answer</button>
+                    <div id="answer" style="display: none;">
+                        <h2 class="mt-3">Answer:</h2>
+                        <p class="card-text">{{ flashcard.answer }}</p>
+                        <form action="/answer/{{ username }}/{{ flashcard.id }}" method="post" class="mt-3">
+                            <button type="submit" name="correct" value="true" class="btn btn-success">Correct</button>
+                            <button type="submit" name="correct" value="false" class="btn btn-danger">Incorrect</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-secondary" onclick="showEditForm()">Edit</button>
+                    <form action="/delete_flashcard/{{ username }}/{{ flashcard.id }}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+            <div id="edit-form" style="display: none;">
+                <h2>Edit Flashcard</h2>
+                <form action="/edit_flashcard/{{ username }}/{{ flashcard.id }}" method="post">
+                    <div class="mb-3">
+                        <label for="edit-question" class="form-label">Question:</label>
+                        <textarea class="form-control" id="edit-question" name="question" rows="3" required>{{ flashcard.question }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-answer" class="form-label">Answer:</label>
+                        <textarea class="form-control" id="edit-answer" name="answer" rows="3" required>{{ flashcard.answer }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        {% else %}
+            <p class="alert alert-info">No flashcards to review today.</p>
+        {% endif %}
+        <h2 class="mt-5">Add New Flashcard</h2>
+        <form action="/add_flashcard/{{ username }}" method="post">
+            <div class="mb-3">
+                <label for="new-question" class="form-label">Question:</label>
+                <textarea class="form-control" id="new-question" name="question" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="new-answer" class="form-label">Answer:</label>
+                <textarea class="form-control" id="new-answer" name="answer" rows="3" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Flashcard</button>
+        </form>
+    </div>
+    
+    <!-- Bootstrap JS (optional, only needed if you want to use Bootstrap's JavaScript features) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showAnswer() {
+            document.getElementById('answer').style.display = 'block';
+        }
+        function showEditForm() {
+            document.getElementById('edit-form').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+# docker-compose.yml
+version: '3'
+services:
+  flashcards:
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "8080:8080"
+    image: mat/flashcards:latest
+    container_name: flashcards
+    networks:
+      - cloudflare
+    environment:
+      - ENV=production
+
+networks:
+  cloudflare:
+    external: true
