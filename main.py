@@ -68,9 +68,9 @@ async def answer(username: str, flashcard_id: int, correct: bool = Form(...)):
     cursor = conn.cursor()
     if correct:
         cursor.execute("UPDATE flashcards SET level = level + 1, review_date = ? WHERE id = ?", 
-                       (datetime.now().date() + timedelta(days=2**(cursor.execute("SELECT level FROM flashcards WHERE id = ?", (flashcard_id,)).fetchone()[0] + 1)), flashcard_id))
+                       (datetime.now().date() + timedelta(days=2**(cursor.execute("SELECT level FROM flashcards WHERE id = ?", (flashcard_id,)).fetchone()[0] ) - 1), flashcard_id))
     else:
-        cursor.execute("UPDATE flashcards SET level = 1, review_date = ? WHERE id = ?", 
+        cursor.execute("UPDATE flashcards SET level = 2, review_date = ? WHERE id = ?", 
                        (datetime.now().date() + timedelta(days=1), flashcard_id))
     conn.commit()
     conn.close()
@@ -81,7 +81,7 @@ async def add_flashcard(username: str, question: str = Form(...), answer: str = 
     conn = get_db(username)
     cursor = conn.cursor()
     cursor.execute("INSERT INTO flashcards (question, answer, review_date, level) VALUES (?, ?, ?, ?)",
-                   (question, answer, datetime.now().date() + timedelta(days=0), 1))
+                   (question, answer, datetime.now().date() + timedelta(days=0), 2))
     conn.commit()
     conn.close()
     return RedirectResponse(url=f"/flashcards/{username}", status_code=303)

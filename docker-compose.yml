@@ -6,11 +6,13 @@ services:
       context: .
       dockerfile: dockerfile
     ports:
-      - "8080:8080"
+      - "8090:8090"
     image: mat/flashcards:latest
     container_name: flashcards
     networks:
       - cloudflare
+    volumes:
+      - ./DB-out-of-docker:/app/databases 
     environment:
       - ENV=production
 
